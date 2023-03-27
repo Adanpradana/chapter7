@@ -16,7 +16,7 @@ const login = (req, res, next) => {
   jwt.verify(token, process.env.TOKEN, (err, decodedToken) => {
     if (decodedToken) {
       req.userId = decodedToken.id;
-      return res.redirect("/");
+      return res.redirect("/dashboard");
     }
     next();
   });

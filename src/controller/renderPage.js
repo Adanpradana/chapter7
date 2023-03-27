@@ -11,7 +11,10 @@ function login(req, res) {
 function history(req, res) {
   res.render("pages/history");
 }
+function dashboard(req, res) {
+  res.render("pages/dashboard");
+}
 function whoAmI(req, res) {
   res.render("pages/whoami");
 }
-module.exports = { home, register, login, history, whoAmI };
+module.exports = { home, register, login, history, whoAmI, dashboard };

@@ -3,7 +3,7 @@ const router = express.Router();
 const renderPage = require("../controller/renderPage");
 const protected = require("../middleware/protected");
 
-router.get("/", renderPage.home);
+router.get("/", protected.login, renderPage.home);
 router.get("/register", renderPage.register);
 router.get("/dashboard", protected.routes, renderPage.dashboard);
 router.get("/login", protected.login, renderPage.login);

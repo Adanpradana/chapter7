@@ -10,8 +10,8 @@ const authRoutes = require("./src/routes/auth.routes");
 app.use(
   session({
     secret: "secret",
-    resave: true,
-    saveUninitialized: true,
+    resave: false,
+    saveUninitialized: false,
     maxAge: 3600000000,
   })
 );

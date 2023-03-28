@@ -48,9 +48,18 @@ async function login(req, res) {
   }
 }
 
+async function getUsers(req, res) {
+  const users = await prisma.userGame.findMany();
+  if (users.length > 0) {
+    return res
+      .status(200)
+      .json({ message: "success get all data", data: users });
+  }
+  res.status(200).json({ message: "users is empty" });
+}
 function logout(req, res) {
   req.session.destroy();
   res.redirect("/");
 }
 
-module.exports = { register, login, logout };
+module.exports = { register, login, logout, getUsers };

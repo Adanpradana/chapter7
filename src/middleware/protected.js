@@ -1,6 +1,6 @@
 const jwt = require("jsonwebtoken");
 
-const routes = (req, res, next) => {
+const restrictRoutes = (req, res, next) => {
   const token = req.session.token;
   jwt.verify(token, process.env.TOKEN, (err, decodedToken) => {
     if (err || !decodedToken) {
@@ -11,7 +11,7 @@ const routes = (req, res, next) => {
   });
 };
 
-const login = (req, res, next) => {
+const restrictLogin = (req, res, next) => {
   const token = req.session.token;
   jwt.verify(token, process.env.TOKEN, (err, decodedToken) => {
     if (decodedToken) {
@@ -21,4 +21,4 @@ const login = (req, res, next) => {
     next();
   });
 };
-module.exports = { routes, login };
+module.exports = { restrictRoutes, restrictLogin };

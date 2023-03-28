@@ -1,13 +1,13 @@
 const express = require("express");
 const router = express.Router();
 const renderPage = require("../controller/renderPage");
-const protected = require("../middleware/protected");
+const { restrictLogin, restrictRoutes } = require("../middleware/protected");
 
-router.get("/", protected.login, renderPage.home);
-router.get("/register", renderPage.register);
-router.get("/dashboard", protected.routes, renderPage.dashboard);
-router.get("/login", protected.login, renderPage.login);
+router.get("/", restrictLogin, renderPage.home);
+router.get("/register", restrictLogin, renderPage.register);
+router.get("/dashboard", restrictRoutes, renderPage.dashboard);
+router.get("/login", restrictLogin, renderPage.login);
 router.get("/history", renderPage.history);
-router.get("/whoami", protected.routes, renderPage.whoAmI);
+router.get("/whoami", restrictRoutes, renderPage.whoAmI);
 
 module.exports = router;

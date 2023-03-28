@@ -14,8 +14,15 @@ function login(req, res) {
 function history(req, res) {
   res.render("pages/history");
 }
-function dashboard(req, res) {
-  res.render("pages/dashboard");
+async function dashboard(req, res) {
+  const id = req.userId; //from token
+  const whoMe = await prisma.userGame.findUnique({
+    where: {
+      id,
+    },
+  });
+
+  return res.render("pages/dashboard", { person: whoMe.username });
 }
 async function whoAmI(req, res) {
   const id = req.userId;

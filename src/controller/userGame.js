@@ -42,6 +42,7 @@ async function login(req, res) {
 
     req.session.token = token;
     res.status(200).redirect("/dashboard");
+    req.flash("person", user.username);
   } catch (error) {
     res.redirect("/login");
   }

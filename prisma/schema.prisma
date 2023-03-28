@@ -27,11 +27,11 @@ model userGameBiodata {
 }
 
 model GameRoom {
-  id         String @id @default(uuid())
-  player_one String
-  player_two String
-  times      String
-  winner     String
-  room       String
-  Result     String
+  id         String   @id @default(uuid())
+  player_one String?
+  player_two String?
+  times      String?
+  winner     String?
+  room       String?
+  Result     String[]
 }

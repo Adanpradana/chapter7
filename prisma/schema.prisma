@@ -25,3 +25,13 @@ model userGameBiodata {
   userGame   userGame @relation(fields: [userGameId], references: [id], onDelete: Cascade, onUpdate: Cascade)
   userGameId String   @unique
 }
+
+model GameRoom {
+  id         String @id @default(uuid())
+  player_one String
+  player_two String
+  times      String
+  winner     String
+  room       String
+  Result     String
+}

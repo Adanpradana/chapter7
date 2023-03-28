@@ -8,6 +8,6 @@ router.get("/register", renderPage.register);
 router.get("/dashboard", protected.routes, renderPage.dashboard);
 router.get("/login", protected.login, renderPage.login);
 router.get("/history", renderPage.history);
-router.get("/whoami", renderPage.whoAmI);
+router.get("/whoami", protected.routes, renderPage.whoAmI);
 
 module.exports = router;

@@ -46,6 +46,7 @@ async function login(req, res) {
     res.redirect("/login");
   }
 }
+
 function logout(req, res) {
   req.session.destroy();
   res.redirect("/");

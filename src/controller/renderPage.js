@@ -33,7 +33,7 @@ async function whoAmI(req, res) {
       },
     });
 
-    return res.render("pages/whoami", { payload: whoMe.username });
+    return res.render("pages/whoami", { person: whoMe.username });
   } catch (error) {
     res.send(error.message);
   }

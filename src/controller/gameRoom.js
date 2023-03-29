@@ -218,14 +218,59 @@ async function playerPlay(req, res) {
 
 async function gameResult(req, res) {
   const { roomId } = req.params;
-  const { username } = req.body;
-  if (username == null || username === "") {
-    return res.status(400).json({ message: "player_two cannot be empty !" });
-  }
-  if (roomId == null || roomId === "") {
-    return res.status(400).json({ message: "no room valid!" });
+  try {
+    const getRoom = await prisma.gameRoom.findUnique({
+      where: {
+        id: roomId,
+      },
+    });
+    if (!getRoom) {
+      return res.status(400).json({ message: "room not found" });
+    }
+
+    let playerOneScore = 0;
+    let playerTwoScore = 0;
+
+    getRoom.player_one_choice.forEach((pick, index) => {
+      const playerOne = pick[index];
+      const playerTwo = getRoom.player_two_choice[index];
+      if (playerOne === playerTwo) {
+        playerOneScore === 0 || playerTwoScore === 0;
+        getRoom.Result.push("Draw");
+      } else if (
+        (playerOne === "P" && playerTwo === "R") ||
+        (playerOne === "S" && playerTwo === "P") ||
+        (playerOne === "R" && playerTwo === "S")
+      ) {
+        getRoom.Result.push(`player one wins`);
+        playerOneScore++;
+      } else {
+        getRoom.Result.push(`player two wins`);
+        playerTwoScore++;
+      }
+    });
+    if (playerOneScore === playerTwoScore) {
+      getRoom.winner = "draw";
+    } else if (playerOneScore > playerTwoScore) {
+      getRoom.winner = `player one: ${getRoom.player_one} is champion`;
+    } else {
+      getRoom.winner = `player two: ${getRoom.player_two} is champion`;
+    }
+    const winner = await prisma.gameRoom.update({
+      where: {
+        id: roomId,
+      },
+      data: {
+        winner: getRoom.winner,
+      },
+    });
+
+    res.status(200).json({ message: "succes update data! yeay", data: winner });
+  } catch (error) {
+    res.send(error.message);
   }
 }
+
 module.exports = {
   create,
   getData,

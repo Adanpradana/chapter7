@@ -65,13 +65,13 @@ async function getRoomById(req, res) {
 async function joinPlayer(req, res) {
   const { roomId } = req.params;
   const { username } = req.body;
+  if (username == null || username === "") {
+    return res.status(400).json({ message: "player_two cannot be empty !" });
+  }
+  if (roomId == null || roomId === "") {
+    return res.status(400).json({ message: "no room valid!" });
+  }
   try {
-    if (username == null || username === "") {
-      return res.status(400).json({ message: "player_two cannot be empty !" });
-    }
-    if (roomId == null || roomId === "") {
-      return res.status(400).json({ message: "no room valid!" });
-    }
     const getPlayer = await prisma.userGame.findUnique({
       where: {
         username,
@@ -130,4 +130,108 @@ async function remove(req, res) {
     Promise.reject(error.message);
   }
 }
-module.exports = { create, getData, remove, getRoomById, joinPlayer };
+async function playerPlay(req, res) {
+  const { roomId } = req.params;
+  const { choice, username } = req.body;
+  if (username == null || username === "") {
+    return res.status(400).json({ message: "player` cannot be empty !" });
+  }
+  if (roomId == null || roomId === "") {
+    return res.status(400).json({ message: "no room valid!" });
+  }
+  if (
+    choice == null ||
+    choice === "" ||
+    !["R", "P", "S"].includes(choice.toUpperCase())
+  ) {
+    return res.status(400).json({ message: "please enter valid choice" });
+  }
+  try {
+    const getRoomId = await prisma.gameRoom.findUnique({
+      where: {
+        id: roomId,
+      },
+    });
+    if (!getRoomId) {
+      return res.status(400).json({ message: "room not found" });
+    }
+
+    let condition = null;
+    if (getRoomId.player_one === username) {
+      condition = "player_one";
+    } else if (getRoomId.player_two === username) {
+      condition = "player_two";
+    } else {
+      return res.status(400).json({ message: "user not registered as player" });
+    }
+
+    const { player_one_choice, player_two_choice } = getRoomId;
+    if (player_one_choice.length === 3 && player_two_choice.length === 3) {
+      return res
+        .status(400)
+        .json({ message: "game finsihed check the result" });
+    }
+    if (condition === "player_one") {
+      if (player_one_choice.length > player_two_choice.length) {
+        return res.status(200).json({ message: "wait your turn player one!" });
+      } else {
+        if (player_one_choice.length === 3) {
+          return res.status(400).json({ message: "player 1 chance is full" });
+        }
+        const updateRoomId = await prisma.gameRoom.update({
+          where: {
+            id: roomId,
+          },
+          data: {
+            player_one_choice: player_one_choice.concat(choice),
+          },
+        });
+        return res.status(200).json({
+          message: `player one picked !`,
+        });
+      }
+    }
+    if (
+      player_one_choice.length === 0 ||
+      player_two_choice.length === player_one_choice.length
+    ) {
+      return res.status(200).json({ message: "wait your turn player two!" });
+    } else {
+      if (player_two_choice.length === 3) {
+        return res.status(400).json({ message: "player 2 chance is full" });
+      }
+      const updateRoomId = await prisma.gameRoom.update({
+        where: {
+          id: roomId,
+        },
+        data: {
+          player_two_choice: player_two_choice.concat(choice),
+        },
+      });
+      return res.status(200).json({ message: `player two picked !` });
+    }
+  } catch (error) {
+    console.log(error);
+    res.status(500).send(error.message);
+  }
+}
+
+async function gameResult(req, res) {
+  const { roomId } = req.params;
+  const { username } = req.body;
+  if (username == null || username === "") {
+    return res.status(400).json({ message: "player_two cannot be empty !" });
+  }
+  if (roomId == null || roomId === "") {
+    return res.status(400).json({ message: "no room valid!" });
+  }
+}
+module.exports = {
+  create,
+  getData,
+  remove,
+  getRoomById,
+  joinPlayer,
+  playerPlay,
+  gameResult,
+};

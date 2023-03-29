@@ -1,4 +1,6 @@
 const jwt = require("jsonwebtoken");
+const { PrismaClient } = require("@prisma/client");
+const prisma = new PrismaClient();
 
 const restrictRoutes = (req, res, next) => {
   const token = req.session.token;
@@ -37,4 +39,22 @@ const authOnly = (req, res, next) => {
     return res.status(401).json({ message: "Unauthorized" });
   }
 };
-module.exports = { restrictRoutes, restrictLogin, authOnly };
+
+const adminOnly = async (req, res, next) => {
+  try {
+    const id = req.user.id;
+    const admin = await prisma.userGame.findUnique({
+      where: {
+        id,
+      },
+    });
+
+    if (admin.username === "adan") {
+      return next();
+    }
+    res.status(403).json({ error: "Admin access only" });
+  } catch (error) {
+    res.status(500).json({ message: error });
+  }
+};
+module.exports = { restrictRoutes, restrictLogin, authOnly, adminOnly };

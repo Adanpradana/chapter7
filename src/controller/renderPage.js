@@ -22,7 +22,20 @@ async function dashboard(req, res) {
     },
   });
 
-  return res.render("pages/dashboard", { person: whoMe.username });
+  const users = await prisma.userGame.findMany({
+    include: {
+      biodata: true,
+    },
+  });
+  //   // include: {
+  //   //   biodata: true,
+  //   // },
+  // });
+
+  res.render("pages/dashboard", {
+    person: whoMe.username,
+    payload: users,
+  });
 }
 async function whoAmI(req, res) {
   const id = req.userId;

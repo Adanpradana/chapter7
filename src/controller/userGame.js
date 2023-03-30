@@ -16,9 +16,7 @@ async function register(req, res) {
     if (!createUser) {
       return res.send("cannot be empty");
     }
-    res
-      .status(200)
-      .json({ message: "success create user", payload: createUser });
+    res.redirect("/login");
   } catch (error) {
     res.status(500).send(error.message);
   }

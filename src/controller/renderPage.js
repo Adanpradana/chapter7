@@ -27,16 +27,29 @@ async function dashboard(req, res) {
       biodata: true,
     },
   });
-  //   // include: {
-  //   //   biodata: true,
-  //   // },
-  // });
 
   res.render("pages/dashboard", {
     person: whoMe.username,
-    payload: users,
+    users,
   });
 }
+const renderEdit = async (req, res) => {
+  try {
+    const id = req.params.id;
+    const user = await prisma.userGame.findUnique({
+      where: {
+        id,
+      },
+      include: {
+        biodata: true,
+      },
+    });
+
+    res.render("pages/editUser", { person: user });
+  } catch (error) {
+    res.status(400).json({ message: error.message });
+  }
+};
 async function whoAmI(req, res) {
   const id = req.userId;
   try {
@@ -52,4 +65,12 @@ async function whoAmI(req, res) {
   }
 }
 
-module.exports = { home, register, login, history, whoAmI, dashboard };
+module.exports = {
+  home,
+  register,
+  login,
+  history,
+  whoAmI,
+  dashboard,
+  renderEdit,
+};

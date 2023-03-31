@@ -60,4 +60,44 @@ function logout(req, res) {
   res.redirect("/");
 }
 
-module.exports = { register, login, logout, getUsers };
+async function editUsers(req, res) {
+  const { id, fullname, age, gender } = req.body;
+  try {
+    const isEdit = await prisma.userGame.update({
+      where: {
+        id: id,
+      },
+      data: {
+        biodata: {
+          update: {
+            name: fullname,
+            age: parseInt(age),
+            gender,
+          },
+        },
+      },
+    });
+
+    res.redirect("/dashboard");
+  } catch (error) {
+    res.send(error.message);
+  }
+}
+
+async function removeUser(req, res) {
+  const { id } = req.body;
+  try {
+    const isRemove = await prisma.userGame.delete({
+      where: {
+        id,
+      },
+    });
+    if (!isRemove) {
+      res.send("bad request !");
+    }
+    res.redirect("/dashboard");
+  } catch (error) {
+    res.send(error.message);
+  }
+}
+module.exports = { register, login, logout, getUsers, editUsers, removeUser };
